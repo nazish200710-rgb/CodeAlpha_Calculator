@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Calculator</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #141e30, #243b55);
+}
+
+.calculator {
+    width: 100%;
+    max-width: 360px;
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* Display */
+.display {
+    background: #000;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: right;
+}
+
+.display input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0f0;
+    font-size: 2.2rem;
+}
+
+.preview {
+    color: #aaa;
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+button {
+    height: 60px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+button:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+}
+
+.number {
+    background: #333;
+    color: #fff;
+}
+
+.operator {
+    background: #ff9f0a;
+    color: #fff;
+}
+
+.control {
+    background: #a5a5a5;
+    color: #000;
+}
+
+.equal {
+    background: #34c759;
+    color: #fff;
+    grid-column: span 2;
+}
+
+@media (max-width: 420px) {
+    button {
+        height: 50px;
+        font-size: 1.2rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+    <div class="display">
+        <input type="text" id="screen" readonly>
+        <div class="preview" id="preview"></div>
+    </div>
+
+    <div class="buttons">
+        <button class="control" onclick="clearAll()">AC</button>
+        <button class="control" onclick="deleteLast()">⌫</button>
+        <button class="operator" onclick="append('/')">÷</button>
+        <button class="operator" onclick="append('*')">×</button>
+
+        <button class="number" onclick="append('7')">7</button>
+        <button class="number" onclick="append('8')">8</button>
+        <button class="number" onclick="append('9')">9</button>
+        <button class="operator" onclick="append('-')">−</button>
+
+        <button class="number" onclick="append('4')">4</button>
+        <button class="number" onclick="append('5')">5</button>
+        <button class="number" onclick="append('6')">6</button>
+        <button class="operator" onclick="append('+')">+</button>
+
+        <button class="number" onclick="append('1')">1</button>
+        <button class="number" onclick="append('2')">2</button>
+        <button class="number" onclick="append('3')">3</button>
+
+        <button class="number" onclick="append('0')">0</button>
+        <button class="number" onclick="append('.')">.</button>
+        <button class="equal" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+const screen = document.getElementById("screen");
+const preview = document.getElementById("preview");
+
+function append(value) {
+    screen.value += value;
+    showPreview();
+}
+
+function clearAll() {
+    screen.value = "";
+    preview.innerText = "";
+}
+
+function deleteLast() {
+    screen.value = screen.value.slice(0, -1);
+    showPreview();
+}
+
+function calculate() {
+    try {
+        screen.value = Function("return " + screen.value)();
+        preview.innerText = "";
+    } catch {
+        screen.value = "Error";
+        preview.innerText = "";
+    }
+}
+
+function showPreview() {
+    try {
+        if (screen.value !== "") {
+            preview.innerText = "= " + Function("return " + screen.value)();
+        } else {
+            preview.innerText = "";
+        }
+    } catch {
+        preview.innerText = "";
+    }
+}
+
+/* 🔹 Keyboard Support */
+document.addEventListener("keydown", (e) => {
+    if ("0123456789+-*/.".includes(e.key)) {
+        append(e.key);
+    }
+    else if (e.key === "Enter") {
+        calculate();
+    }
+    else if (e.key === "Backspace") {
+        deleteLast();
+    }
+    else if (e.key === "Escape") {
+        clearAll();
+    }
+});
+</script>
+
+</body>
+</html>
